@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-zz-=c-5!u$idgbhqj$$gzw#$2*0^26(496-=f2n$%e)$(g9p!$"
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -104,9 +104,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 API_KEY_SECRET = config("API_KEY_SECRET")
 
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ("profits.permissions.Check_API_KEY_Auth",),
-}
+# REST_FRAMEWORK = {
+#     "DEFAULT_PERMISSION_CLASSES": ("profits.permissions.Check_API_KEY_Auth",),
+# }
 
 
 # Internationalization
