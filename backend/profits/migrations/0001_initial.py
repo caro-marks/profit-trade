@@ -8,20 +8,36 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Trade',
+            name="Trade",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ativo', models.CharField(default=None, max_length=128)),
-                ('operacao', models.CharField(choices=[('COMPRA', 'BUY'), ('VENDA', 'SELL')], max_length=6)),
-                ('data', models.DateField(default=django.utils.timezone.now)),
-                ('quantidade', models.PositiveSmallIntegerField()),
-                ('preco', models.DecimalField(decimal_places=2, max_digits=8)),
-                ('custos', models.DecimalField(decimal_places=2, max_digits=4)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("ativo", models.CharField(default=None, max_length=128)),
+                (
+                    "operacao",
+                    models.CharField(
+                        choices=[("COMPRA", "BUY"), ("VENDA", "SELL")], max_length=6
+                    ),
+                ),
+                ("data", models.DateField(default=django.utils.timezone.now)),
+                ("quantidade", models.PositiveSmallIntegerField()),
+                ("preco", models.DecimalField(decimal_places=2, max_digits=8)),
+                ("custos", models.DecimalField(decimal_places=2, max_digits=4)),
+                ("daytrade", models.BooleanField(default=False)),
+                ("preco_medio", models.DecimalField(max_digits=8, decimal_places=2)),
+                ("quantidade_acumulada", models.PositiveSmallIntegerField()),
+                ("lucro", models.DecimalField(max_digits=8, decimal_places=2)),
             ],
         ),
     ]

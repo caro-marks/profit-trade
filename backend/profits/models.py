@@ -20,7 +20,9 @@ class Trade(models.Model):
     quantidade = models.PositiveSmallIntegerField()
     preco = models.DecimalField(max_digits=8, decimal_places=2)
     custos = models.DecimalField(max_digits=4, decimal_places=2)
-    # daytrade = models.BooleanField()
-    # mean_price = models.DecimalField(max_digits=8, decimal_places=2)
-    # total_quantity = models.PositiveSmallIntegerField()
-    # profit = models.DecimalField(max_digits=8, decimal_places=2)
+    daytrade = models.BooleanField(default=False)
+    preco_medio = models.DecimalField(
+        max_digits=8, decimal_places=2, default=None, null=True
+    )
+    quantidade_acumulada = models.PositiveSmallIntegerField(default=0)
+    lucro = models.DecimalField(max_digits=8, decimal_places=2, default=None, null=True)
