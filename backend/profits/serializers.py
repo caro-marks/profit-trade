@@ -1,38 +1,30 @@
-from datetime import date
-from django.db import models
 from rest_framework import serializers
 from profits.models import Trade
 
 
 class TradeListSerializer(serializers.ListSerializer):
-
-    # def daytrades(self, obj):
-    #     trades = {}
-    #     for trade in obj:
-    #         if trade["data"] in trades.keys():
-    #             trades[trade["data"]].append(trade)
-    #         else:
-    #             trades[trade["data"]] = [
-    #                 trade,
-    #             ]
-    #     for trade in trades.values():
-    #         ativos_unicos = [daytrade['ativo'] for daytrade in]
-    #     return trades
-
     def create(self, validated_data):
         trades = [Trade(**trade) for trade in validated_data]
-        # test = self.daytrades(validated_data)
-        # print(test)
         return Trade.objects.bulk_create(trades)
 
 
 class TradeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trade
+        list_serializer_class = TradeListSerializer
+        exclude = ("id",)
+
+    def create(self, validated_data):
+        return super().create(validated_data)
+
     daytrade = serializers.SerializerMethodField()
-    # preco_medio = serializers.SerializerMethodField()
+    preco_medio = serializers.SerializerMethodField()
     # quantidade_acumulada = serializers.SerializerMethodField()
     # lucro = serializers.SerializerMethodField()
 
     def get_daytrade(self, obj):
+        # print(f'\n{Trade.objects.all()}\n')
+        # print(obj.ativo, obj.data, obj.operacao)
         try:
             trades = Trade.objects.filter(ativo=obj.ativo, data=obj.data)
         except Exception as err:
@@ -43,26 +35,28 @@ class TradeSerializer(serializers.ModelSerializer):
             else:
                 return len(trades.filter(operacao="VENDA")) > 0
 
-    class Meta:
-        model = Trade
-        list_serializer_class = TradeListSerializer
-        exclude = ("id",)
-
-    def create(self, validated_data):
-        return super().create(validated_data)
-
-    # def get_preco_medio(self, obj):
-    #     if obj.operacao == "VENDA":
-    #         return None
-    #     else:
-    #         actual_mean_price = obj.preco + (obj.custos / obj.quantidade)
-    #         try:
-    #             last_buy = Trade.objects.filter(ativo=obj.ativo, operacao="COMPRA")[-1]
-    #         except Exception as err:
-    #             print(err)
-    #             return actual_mean_price
-    #         else:
-    #             return (actual_mean_price + last_buy.preco_medio) / 2
+    def get_preco_medio(self, obj):
+        if obj.operacao == "VENDA":
+            return None
+        else:
+            actual_mean_price = obj.preco + (obj.custos / obj.quantidade)
+            try:
+                last_buy = Trade.objects.filter(
+                    ativo=obj.ativo, operacao="COMPRA", data__lt=obj.data
+                ).last()
+            except Exception as err:
+                print(err)
+            else:
+                print('\n', obj.ativo, obj.operacao, obj.data)
+                if last_buy:
+                    print(last_buy.ativo, last_buy.operacao, last_buy.data, '\n')
+                    latest_mean_price = last_buy.preco + (
+                        last_buy.custos / last_buy.quantidade
+                    )
+                    return (actual_mean_price + latest_mean_price) / 2
+                else:
+                    print(f'{last_buy} \n')
+                    return actual_mean_price
 
     # def get_quantidade_acumulada(self, obj):
     #     try:
