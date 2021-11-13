@@ -3,11 +3,11 @@ from profits import models, serializers, permissions
 
 
 class TradeViewSet(generics.CreateAPIView, generics.ListAPIView):
-    # permission_classes = (permissions.Check_API_KEY_Auth,)
     queryset = models.Trade.objects.all()
     serializer_class = serializers.TradeSerializer
 
     def create(self, request, *args, **kwargs):
+        permission_classes = (permissions.Check_API_KEY_Auth,)
         trades = request.data["trades"]
         serializer = self.get_serializer(data=trades, many=True)
         if serializer.is_valid():
@@ -20,4 +20,6 @@ class TradeViewSet(generics.CreateAPIView, generics.ListAPIView):
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
+        for obj in serializer.validated_data:
+            pass
         return serializer.save()
